@@ -1,0 +1,40 @@
+{
+  "name": "faker-ai",
+  "version": "0.0.1",
+  "description": "Genera datos falsos realistas para tus aplicaciones con facilidad. faker-ai es una herramienta diseñada para desarrolladores que necesitan simular datos como nombres, direcciones, números, fechas y más, para sus proyectos. Basado en inteligencia artificial, este paquete crea datos sintéticos de manera rápida y precisa, ideal para pruebas, desarrollo o demostraciones sin comprometer la privacidad de datos reales. ¡Simplifica tu flujo de trabajo y lleva tus prototipos y pruebas a un nuevo nivel con faker-ai!",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fainnerramirez/faker-ai.git"
+  },
+  "keywords": [
+    "ai",
+    "ia",
+    "faker",
+    "data",
+    "json",
+    "developer",
+    "json",
+    "api",
+    "openasi",
+    "claudeai"
+  ],
+  "author": "@fainnerramirez",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fainnerramirez/faker-ai/issues"
+  },
+  "homepage": "https://github.com/fainnerramirez/faker-ai#readme",
+  "devDependencies": {
+    "dotenv": "^16.4.7",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "openai": "^4.76.0",
+    "zod": "^3.23.8"
+  }
+}
