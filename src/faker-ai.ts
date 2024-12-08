@@ -8,9 +8,10 @@ import {
 } from "openai/resources";
 import { z, ZodObject } from "zod";
 import "dotenv/config";
-import { ConfigAI } from "./config/config-ai";
+import { ConfigGenerateAI } from "./config/config-ai";
+import { ResponseDataRandom, typeDataRamdom } from "./interfaces/types";
 
-export class FakerAI extends ConfigAI {
+export class FakerAI extends ConfigGenerateAI {
   private _openai: OpenAI;
   private _promtAI: string = "";
   private _isJSONScheme: boolean = false;
@@ -22,30 +23,28 @@ export class FakerAI extends ConfigAI {
     | ResponseFormatJSONSchema
     | ResponseFormatJSONObject
     | undefined;
+  private typeDataGenerate: string = "";
+  private _dataResponse: any = null;
+  private _API_KEY_OPENAI: string = "";
 
-  constructor() {
+  constructor(API_KEY_OPENAI = "") {
     super();
-    console.log("process.env: ", process.env);
+    console.log("process.env: ", API_KEY_OPENAI);
     this._openai = new OpenAI({
-      apiKey: process.env.API_KEY_OPEN_AI,
+      apiKey: this._API_KEY_OPENAI,
       dangerouslyAllowBrowser: true,
     });
   }
 
-  public async Run(): Promise<void> {
-    await this.ConfigurationResponse(this._zodSchemeValue);
-  }
-
-  private async ConfigurationResponse(
-    zodScheme: ZodObject<any> | null
-  ): Promise<void> {
+  private async ConfigurationResponse(data: ResponseDataRandom): Promise<any> {
     if (this._isZodScheme === true) {
       this._completion = await this._openai.beta.chat.completions.parse({
         model: "gpt-4o-2024-08-06",
         messages: [
           {
             role: "system",
-            content: `Eres un experto generador de datos aleatorios para desarrolladores de software y programadores. Los datos deben ser generados en uno de los siguientes formatos y pueden incluir una amplia variedad de tipos, tales como nombres, correos electrónicos, direcciones, edades, precios, monedas, y más.
+            content:
+              `Eres un experto generador de datos aleatorios para desarrolladores de software y programadores. Los datos deben ser generados en uno de los siguientes formatos y pueden incluir una amplia variedad de tipos, tales como nombres, correos electrónicos, direcciones, edades, precios, monedas, y más.
 
             Tipos de datos aleatorios que se pueden generar:
             
@@ -112,6 +111,64 @@ export class FakerAI extends ConfigAI {
                     "edad": 27,
                     "ciudad": "Barcelona"
                 }
+                ` +
+              `
+                el lenguaje base que vas a utilizar es javascript con typescript para los tipos de los datos que vas a generar.
+                - Por ejemplo si solicito una lista de nombres completos me vas a DEVOLVER un ARRAY de nombres así; esto es un ejemplo: ["nombre1", "nombre2", "nombre3"]
+                de esta manera vas a seguir el siguiente paso a paso para generar la data: 
+
+                la enumeración que el usuario va a tener par generar la data depende de unas opciones que estan en esta estructura: 
+                export enum typeDataRamdom {
+                  NAMES = 1,
+                  DATES,
+                  COUNTRIES,
+                  CITYS,
+                  PHONE_NUMBERS,
+                  EMAILS,
+                  URLS,
+                  ADDRESSES,
+                  NUMBERS,
+                  BOOLEANS,
+                  PERCENTAGES,
+                  SENTENCES,
+                  WORDS,
+                  TEXTS,
+                  UUIDS,
+                  CREDIT_CARDS,
+                  IP_ADDRESSES,
+                  GAMES,
+                  CURRENCIES,
+                  TIMEZONES
+                }
+                
+                Así que, depende lo que pida el usuario te lo voyahacer saber a travez de cada opción de esta enumeración:
+                Es decir, si te digo que la data que vas a generar es de tipo typeDataRamdom.NAMES ó 1 es porque el usuario quieres LISTA DE NOMBRES COMPLETOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.DATES ó 2 es porque el usuario quieres LISTA DE FECHAS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.COUNTRIES ó 3 es porque el usuario quieres LISTA DE PAÍSES,
+                Si te digo que la data que vas a generar es de typeDataRamdom.CITYS ó 4 es porque el usuario quieres LISTA DE CIUDADES,
+                Si te digo que la data que vas a generar es de typeDataRamdom.PHONE_NUMBERS ó 5 es porque el usuario quieres LISTA DE N��MEROS DE TELÉFONO,
+                Si te digo que la data que vas a generar es de typeDataRamdom.EMAILS ó 6 es porque el usuario quieres LISTA DE CORREOS ELECTRÓNICOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.URLS ó 7 es porque el usuario quieres LISTA DE URLS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.ADDRESSES ó 8 es porque el usuario quieres LISTA DE DIRECCIONES,
+                Si te digo que la data que vas a generar es de typeDataRamdom.NUMBERS ó 9 es porque el usuario quieres LISTA DE N��MEROS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.BOOLEANS ó 10 es porque el usuario quieres LISTA DE VALORES BOOLEANOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.PERCENTAGES ó 11 es porque el usuario quieres LISTA DE N��MEROS EN PORCENTAJE,
+                Si te digo que la data que vas a generar es de typeDataRamdom.SENTENCES ó 12 es porque el usuario quieres LISTA DE ORACIONES,
+                Si te digo que la data que vas a generar es de typeDataRamdom.WORDS ó 13 es porque el usuario quieres LISTA DE PALABRAS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.TEXTS ó 14 es porque el usuario quieres LISTA DE TEXTOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.UUIDS ó 15 es porque el usuario quieres LISTA DE UUIDS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.CREDIT_CARDS ó 16 es porque el usuario quieres LISTA DE TARJETAS DE CRÉDITO,
+                Si te digo que la data que vas a generar es de typeDataRamdom.IP_ADDRESSES ó 17 es porque el usuario quieres LISTA DE DIRECCIONES IP,
+                Si te digo que la data que vas a generar es de typeDataRamdom.GAMES ó 18 es porque el usuario quieres LISTA DE JUEGOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.CURRENCIES es porque el usuario quieres LISTA DE MONEDAS así: {symbol, value}
+                Si te digo que la data que vas a generar es de typeDataRamdom.TIMEZONES ó 19 es porque el usuario quieres LISTA DE ZONAS HORARIAS,
+
+                por tanto la solicitud completa del usuario es la siguiente:
+
+                - el tipo de data que vas a generar es ${data.type}
+                - el número de elementos que vas a generar son ${data.count}
+
+                solo generar la data que te pido SIN TEXTO ADICIONAL para que yo pueda utilizarla desde javascript y manipkuar esta data.
                 `,
           },
           {
@@ -120,10 +177,12 @@ export class FakerAI extends ConfigAI {
           },
         ],
         response_format: zodResponseFormat(
-          zodScheme as ZodObject<any>,
+          this._zodSchemeValue as ZodObject<any>,
           "schemeParsed"
         ),
       });
+
+      this._dataResponse = this._completion.choices[0].message.parsed;
     } else {
       this._completion = await this._openai.chat.completions.create({
         model: "gpt-4o-2024-08-06",
@@ -131,7 +190,8 @@ export class FakerAI extends ConfigAI {
         messages: [
           {
             role: "system",
-            content: `Eres un experto generador de datos aleatorios para desarrolladores de software y programadores. Los datos deben ser generados en uno de los siguientes formatos y pueden incluir una amplia variedad de tipos, tales como nombres, correos electrónicos, direcciones, edades, precios, monedas, y más.
+            content:
+              `Eres un experto generador de datos aleatorios para desarrolladores de software y programadores. Los datos deben ser generados en uno de los siguientes formatos y pueden incluir una amplia variedad de tipos, tales como nombres, correos electrónicos, direcciones, edades, precios, monedas, y más.
 
             Tipos de datos aleatorios que se pueden generar:
             
@@ -198,6 +258,64 @@ export class FakerAI extends ConfigAI {
                     "edad": 27,
                     "ciudad": "Barcelona"
                 }
+                ` +
+              `
+                el lenguaje base que vas a utilizar es javascript con typescript para los tipos de los datos que vas a generar.
+                - Por ejemplo si solicito una lista de nombres completos me vas a DEVOLVER un ARRAY de nombres así; esto es un ejemplo: ["nombre1", "nombre2", "nombre3"]
+                de esta manera vas a seguir el siguiente paso a paso para generar la data: 
+
+                la enumeración que el usuario va a tener par generar la data depende de unas opciones que estan en esta estructura: 
+                export enum typeDataRamdom {
+                  NAMES = 1,
+                  DATES,
+                  COUNTRIES,
+                  CITYS,
+                  PHONE_NUMBERS,
+                  EMAILS,
+                  URLS,
+                  ADDRESSES,
+                  NUMBERS,
+                  BOOLEANS,
+                  PERCENTAGES,
+                  SENTENCES,
+                  WORDS,
+                  TEXTS,
+                  UUIDS,
+                  CREDIT_CARDS,
+                  IP_ADDRESSES,
+                  GAMES,
+                  CURRENCIES,
+                  TIMEZONES
+                }
+                
+                Así que, depende lo que pida el usuario te lo voyahacer saber a travez de cada opción de esta enumeración:
+                Es decir, si te digo que la data que vas a generar es de tipo typeDataRamdom.NAMES ó 1 es porque el usuario quieres LISTA DE NOMBRES COMPLETOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.DATES ó 2 es porque el usuario quieres LISTA DE FECHAS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.COUNTRIES ó 3 es porque el usuario quieres LISTA DE PAÍSES,
+                Si te digo que la data que vas a generar es de typeDataRamdom.CITYS ó 4 es porque el usuario quieres LISTA DE CIUDADES,
+                Si te digo que la data que vas a generar es de typeDataRamdom.PHONE_NUMBERS ó 5 es porque el usuario quieres LISTA DE N��MEROS DE TELÉFONO,
+                Si te digo que la data que vas a generar es de typeDataRamdom.EMAILS ó 6 es porque el usuario quieres LISTA DE CORREOS ELECTRÓNICOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.URLS ó 7 es porque el usuario quieres LISTA DE URLS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.ADDRESSES ó 8 es porque el usuario quieres LISTA DE DIRECCIONES,
+                Si te digo que la data que vas a generar es de typeDataRamdom.NUMBERS ó 9 es porque el usuario quieres LISTA DE N��MEROS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.BOOLEANS ó 10 es porque el usuario quieres LISTA DE VALORES BOOLEANOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.PERCENTAGES ó 11 es porque el usuario quieres LISTA DE N��MEROS EN PORCENTAJE,
+                Si te digo que la data que vas a generar es de typeDataRamdom.SENTENCES ó 12 es porque el usuario quieres LISTA DE ORACIONES,
+                Si te digo que la data que vas a generar es de typeDataRamdom.WORDS ó 13 es porque el usuario quieres LISTA DE PALABRAS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.TEXTS ó 14 es porque el usuario quieres LISTA DE TEXTOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.UUIDS ó 15 es porque el usuario quieres LISTA DE UUIDS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.CREDIT_CARDS ó 16 es porque el usuario quieres LISTA DE TARJETAS DE CRÉDITO,
+                Si te digo que la data que vas a generar es de typeDataRamdom.IP_ADDRESSES ó 17 es porque el usuario quieres LISTA DE DIRECCIONES IP,
+                Si te digo que la data que vas a generar es de typeDataRamdom.GAMES ó 18 es porque el usuario quieres LISTA DE JUEGOS,
+                Si te digo que la data que vas a generar es de typeDataRamdom.CURRENCIES es porque el usuario quieres LISTA DE MONEDAS así: {symbol, value}
+                Si te digo que la data que vas a generar es de typeDataRamdom.TIMEZONES ó 19 es porque el usuario quieres LISTA DE ZONAS HORARIAS,
+
+                por tanto la solicitud completa del usuario es la siguiente:
+
+                - el tipo de data que vas a generar es ${data.type}
+                - el número de elementos que vas a generar son ${data.count}
+
+                solo generar la data que te pido SIN TEXTO ADICIONAL para que yo pueda utilizarla desde javascript y manipkuar esta data.
                 `,
           },
           {
@@ -206,23 +324,203 @@ export class FakerAI extends ConfigAI {
           },
         ],
       });
+
+      this._dataResponse = this._completion.choices[0].message;
     }
   }
 
-  public getCompletionResponse(): any {
-    if (
-      this._completion === undefined ||
-      this._completion === null ||
-      this._completion.choices.length === 0
-    ) {
+  private async generateRandomData(
+    data: ResponseDataRandom
+  ): Promise<Array<any>> {
+    return await this.ConfigurationResponse(data);
+  }
+
+  public async names(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.NAMES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async dates(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.DATES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async countries(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.COUNTRIES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async cities(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.CITYS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async phone_numbers(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.PHONE_NUMBERS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async emails(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.EMAILS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async urls(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.URLS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async addresses(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.ADDRESSES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async numbers(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.NUMBERS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async values_booleans(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.BOOLEANS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async percentages(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.PERCENTAGES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async sentences(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.SENTENCES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async words(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.WORDS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async texts(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.TEXTS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async uuids(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.UUIDS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async credit_cards(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.CREDIT_CARDS,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async ip_addresses(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.IP_ADDRESSES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async games(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.GAMES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async currencies(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.CURRENCIES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public async timezones(countElements: number): Promise<this> {
+    const names = await this.generateRandomData({
+      type: typeDataRamdom.TIMEZONES,
+      count: countElements,
+    });
+
+    return this;
+  }
+
+  public getAll(): any {
+    if (this._dataResponse === undefined || this._dataResponse === null) {
       return null;
     }
 
-    if (this._isZodScheme === true) {
-      return this._completion.choices[0].message.parsed;
-    } else {
-      return this._completion.choices[0].message;
-    }
+    return this._dataResponse;
   }
 
   public setZodSchemeValue(value: ZodObject<any>): this {
