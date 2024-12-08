@@ -149,12 +149,17 @@ export class FakerAI extends ConfigGenerateAI {
                 Si te digo que la data que vas a generar es de typeDataRamdom.CURRENCIES es porque el usuario quieres LISTA DE MONEDAS así: {symbol, value}
                 Si te digo que la data que vas a generar es de typeDataRamdom.TIMEZONES ó 19 es porque el usuario quieres LISTA DE ZONAS HORARIAS,
 
+                Toda la data que vas a generar está sujeta a un contexto...este contexto depende del lenguaje que seleccione el usuario:
+                Es decir, si el leguaje es 'es_ES' es porque el usuario quiere que genere la data en un contexto español; es decir, nombres españoles, direcciones de habla hispana,
+                correos de habla hispana y asi sucesivamente...
+
                 por tanto la solicitud completa del usuario es la siguiente:
 
-                - el tipo de data que vas a generar es ${data.type}
-                - el número de elementos que vas a generar son ${data.count}
+                - el TIPO DE DATA que vas a generar es ${data.type}
+                - el NÚMEROS DE ELEMENTOS que vas a generar son ${data.count}
+                - el contexto de la data va a estar en este LENGUAGE que es: ${this._language}
 
-                solo generar la data que te pido SIN TEXTO ADICIONAL para que yo pueda utilizarla desde javascript y manipkuar esta data.
+                solo generar la data que te pido SIN TEXTO ADICIONAL para que yo pueda utilizarla desde javascript y manipuLar esta data de manera sencilla.
                 `,
           },
           {
