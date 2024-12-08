@@ -13,25 +13,16 @@ import { ResponseDataRandom, typeDataRamdom } from "./interfaces/types";
 
 export class FakerAI extends ConfigGenerateAI {
   private _openai: OpenAI;
-  private _promtAI: string = "";
   private _isJSONScheme: boolean = false;
   private _isZodScheme: boolean = false;
   private _zodSchemeValue: ZodObject<any> | any = null;
   private _completion: any;
-  private _formatResponseDefault:
-    | ResponseFormatText
-    | ResponseFormatJSONSchema
-    | ResponseFormatJSONObject
-    | undefined;
-  private typeDataGenerate: string = "";
   private _dataResponse: any = null;
-  private _API_KEY_OPENAI: string = "";
 
   constructor(API_KEY_OPENAI = "") {
     super();
-    console.log("process.env: ", API_KEY_OPENAI);
     this._openai = new OpenAI({
-      apiKey: this._API_KEY_OPENAI,
+      apiKey: API_KEY_OPENAI,
       dangerouslyAllowBrowser: true,
     });
   }
