@@ -55,14 +55,17 @@ const userSchema = z.object({
   ciudad: z.string(),
 });
 
-// Configurar el esquema Zod en FakerAI
+// Ejemplo para configurar el esquema Zod en FakerAI
 fakerAI.setZodSchemeValue(userSchema);
+
+//Establece un contexto a la respuesta para un lenguaje específico
+fakerAI.setLanguageResponse("es_ES");
 
 // Generar datos de prueba (por ejemplo, 5 nombres aleatorios)
 await fakerAI.names(5);
 
 // Obtener los datos generados
-const generatedData = fakerAI.getAll();
+const generatedData = fakerAI.generate();
 console.log(generatedData);
 ```
 
@@ -141,12 +144,18 @@ fakerAI.setIsZodScheme(true); // Activar validación con Zod
 fakerAI.setIsJSONScheme(true); // Activar formato JSON
 ```
 
-## Formato de Respuesta
-
-Los datos generados pueden ser obtenidos a través del método **getAll():**
+- **setLanguageResponse:** Establece un contexto de la respuesta dependiendo el lenguaje. por defecto el leguaje **"es_ES"**
 
 ```typescript
-const data = fakerAI.getAll();
+fakerAI.setLanguageResponse(); // Establece un contexto de la respuesta dependiendo el lenguaje
+```
+
+## Formato de Respuesta
+
+Los datos generados pueden ser obtenidos a través del método **generate():**
+
+```typescript
+const data = fakerAI.generate();
 ```
 
 ## Contribuciones

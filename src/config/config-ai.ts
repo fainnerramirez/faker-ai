@@ -21,5 +21,5 @@ export abstract class ConfigGenerateAI {
   abstract games(count: number): Promise<this>;
   abstract currencies(count: number): Promise<this>;
   abstract timezones(count: number): Promise<this>;
-  abstract getAll(): any;
+  abstract generate(): any;
 }

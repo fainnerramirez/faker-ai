@@ -1,12 +1,6 @@
 import OpenAI from "openai";
 import { zodResponseFormat } from "openai/helpers/zod";
-import {
-  ChatCompletion,
-  ResponseFormatJSONObject,
-  ResponseFormatJSONSchema,
-  ResponseFormatText,
-} from "openai/resources";
-import { z, ZodObject } from "zod";
+import { ZodObject } from "zod";
 import "dotenv/config";
 import { ConfigGenerateAI } from "./config/config-ai";
 import { ResponseDataRandom, typeDataRamdom } from "./interfaces/types";
@@ -18,6 +12,7 @@ export class FakerAI extends ConfigGenerateAI {
   private _zodSchemeValue: ZodObject<any> | any = null;
   private _completion: any;
   private _dataResponse: any = null;
+  private _language: string = "";
 
   constructor(API_KEY_OPENAI = "") {
     super();
@@ -506,7 +501,7 @@ export class FakerAI extends ConfigGenerateAI {
     return this;
   }
 
-  public getAll(): any {
+  public generate(): any {
     if (this._dataResponse === undefined || this._dataResponse === null) {
       return null;
     }
@@ -539,6 +534,13 @@ export class FakerAI extends ConfigGenerateAI {
       this._zodSchemeValue = null;
     }
 
+    return this;
+  }
+
+  public setLanguageResponse(value: string): this {
+    if (value !== undefined || value !== null) {
+      this._language = value;
+    }
     return this;
   }
 }
