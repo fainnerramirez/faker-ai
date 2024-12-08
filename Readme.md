@@ -1,31 +1,53 @@
-# FakerAI
+# FakerAI - Generador de Datos de Prueba con Inteligencia Artificial
 
-FakerAI es un paquete de NPM diseñado para generar datos aleatorios útiles para desarrolladores de software, testers y simulaciones. El paquete usa OpenAI para generar una amplia variedad de datos como nombres, correos electrónicos, direcciones, edades, precios y más, tanto en formatos sencillos como estructurados. FakerAI permite la personalización de los datos generados a través de esquemas Zod y otros formatos.
+**FakerAI** es una poderosa librería de Node.js diseñada para generar datos aleatorios útiles en proyectos de desarrollo y pruebas de software. Usando **OpenAI** y un conjunto flexible de opciones, FakerAI permite a los desarrolladores generar datos como nombres, correos electrónicos, direcciones, fechas, UUIDs, números, tarjetas de crédito, y mucho más.
+
+FakerAI es ideal para crear datos realistas en pruebas de simulación, generación de contenido aleatorio o para usar en entornos de desarrollo.
 
 ## Características
 
-- Generación de datos aleatorios para pruebas y simulaciones.
-- Soporte para varios tipos de datos: nombres, correos electrónicos, direcciones, edades, precios, monedas y más.
-- Integración con OpenAI GPT para la generación avanzada de datos.
-- Salida en varios formatos: texto, listas, JSON y esquemas Zod personalizados.
-- Configuración flexible para elegir el formato de salida y los datos a generar.
+- **Generación de datos aleatorios** para pruebas y simulaciones.
+- **Soporte para una amplia gama de tipos de datos**, incluyendo:
+  - Nombres
+  - Correos electrónicos
+  - Direcciones
+  - Fechas
+  - Números
+  - UUIDs
+  - Tarjetas de crédito
+  - Cuentas bancarias
+  - Y muchos más...
+- **Integración con OpenAI GPT** para generar datos avanzados de manera realista.
+- **Flexibilidad en el formato de salida**:
+  - Datos en texto plano
+  - Datos estructurados en JSON
+  - Datos validados con esquemas Zod
+- **Configuración avanzada** para personalizar los datos generados con facilidad.
 
 ## Instalación
 
-Primero, instala el paquete FakerAI desde NPM:
+Para instalar FakerAI en tu proyecto, puedes usar npm o yarn:
 
 ```bash
 npm install faker-ai
 ```
 
+# Uso
+
+## Requisitos previos
+
+FakerAI requiere una clave de API de OpenAI. Puedes obtener tu clave desde OpenAI. Asegúrate de configurarla como una variable de entorno llamada API_KEY_OPENAI.
+
+## Ejemplo de Uso Básico
+
 ```typescript
 import { FakerAI } from "faker-ai";
 import { z } from "zod";
 
-// Crear una instancia de FakerAI
-const fakerAI = new FakerAI();
+// Crear una instancia de FakerAI con tu clave de API
+const fakerAI = new FakerAI("TU_API_KEY_DE_OPENAI");
 
-// Definir un esquema Zod para la generación de datos
+// Definir un esquema Zod para la validación de datos generados
 const userSchema = z.object({
   nombre: z.string(),
   correo: z.string().email(),
@@ -33,96 +55,108 @@ const userSchema = z.object({
   ciudad: z.string(),
 });
 
-// Configurar el esquema Zod
+// Configurar el esquema Zod en FakerAI
 fakerAI.setZodSchemeValue(userSchema);
 
-// Ejecutar la generación de datos
-await fakerAI.Run();
+// Generar datos de prueba (por ejemplo, 5 nombres aleatorios)
+await fakerAI.names(5);
 
-// Obtener la respuesta generada
-const generatedData = fakerAI.getCompletionResponse();
+// Obtener los datos generados
+const generatedData = fakerAI.getAll();
 console.log(generatedData);
 ```
 
-# Métodos
+## Métodos Principales
 
-**setZodSchemeValue(value: ZodObject<any>): this**
-Establece el esquema Zod que define los tipos de los datos que se generarán.
+FakerAI ofrece métodos específicos para generar distintos tipos de datos. Aquí hay algunos ejemplos:
 
-**setIsZodScheme(value: boolean): this**
-Configura si los datos deben generarse usando un esquema Zod. Si se establece en false, deshabilita el uso de esquemas Zod.
+**Generar Nombres:**
 
-**setIsJSONScheme(value: boolean): this**
-Configura si los datos deben generarse en formato JSON. Si se establece en false, deshabilita este formato.
-
-**Run(): Promise<void>**
-Genera los datos aleatorios de acuerdo con el esquema y las configuraciones definidas. Este método debe ser llamado después de configurar el esquema y el tipo de formato.
-
-**getCompletionResponse(): any**
-Devuelve los datos generados en el formato especificado, ya sea como un texto plano, un JSON o un esquema Zod validado.
-
-### Ejemplos de Solicitudes
-
-El sistema de FakerAI puede generar los siguientes tipos de datos:
-
-**Nombres completos aleatorios**: 'Juan Pérez', 'Ana Rodríguez', 'Carlos López', ...
-**Correos electrónicos aleatorios**: ['usuario1@dominio.com', 'usuario2@dominio.com', ...]
-**Direcciones completas**:
-
-```json
-{
-  "calle": "Calle Falsa 123",
-  "ciudad": "Ciudad de México",
-  "codigoPostal": "01000"
-}
+```typescript
+await fakerAI.names(10);
 ```
 
-Precios aleatorios con monedas:
+**Generar Correos Electrónicos:**
 
-```json
-{
-  "precio": 100.0,
-  "moneda": "USD"
-}
+```typescript
+await fakerAI.emails(10);
 ```
 
-### Datos con esquema Zod personalizado:
+Generar Direcciones:
 
-```json
-{
-  "nombre": "Laura García",
-  "correo": "laura@dominio.com",
-  "edad": 27,
-  "ciudad": "Barcelona"
-}
+```typescript
+await fakerAI.addresses(10);
+```
+
+Generar Fechas:
+
+```typescript
+await fakerAI.dates(10);
+```
+
+Generar UUIDs:
+
+```typescript
+await fakerAI.uuids(10);
+```
+
+Generar Número de tarjetas de crédito:
+
+```typescript
+await fakerAI.credit_cards(10);
 ```
 
 ## Formatos de Respuesta
 
-FakerAI soporta varios formatos de salida para los datos generados:
+FakerAI permite varios formatos de salida, incluyendo:
 
-**Cadena de texto**: Un solo valor de texto como un nombre o correo electrónico.
-**Lista de cadenas**: Una lista de elementos de texto aleatorios.
-**Formato JSON**: Datos estructurados como objetos JSON, ideales para representar información compleja.
-**Esquema Zod personalizado**: Datos validados y estructurados según un esquema Zod proporcionado.
+**Texto plano:** Datos generados como cadenas de texto.
+**JSON:** Datos estructurados en formato JSON, ideales para usar en bases de datos o API.
+**Esquemas Zod personalizados:** Los datos generados pueden validarse automáticamente contra esquemas Zod definidos por el usuario.
 
-### Configuración de la API
+Puedes elegir el formato que prefieras mediante las configuraciones disponibles en el paquete.
 
-Para usar FakerAI, necesitas una clave de API de OpenAI. Configura la variable de entorno API_KEY_OPEN_AI con tu clave de API antes de ejecutar el código.
+## Métodos de Configuración
 
-```bash
-export API_KEY_OPEN_AI="tu_clave_de_api_aqui"
+- **setZodSchemeValue:** Configura un esquema Zod para validar los datos generados.
+
+```typescript
+fakerAI.setZodSchemeValue(
+  z.object({
+    nombre: z.string(),
+    correo: z.string().email(),
+  })
+);
 ```
 
-**Dependencias**
+- **setIsZodScheme:** Habilita o deshabilita la validación con Zod.
 
-**openai**: La librería que interactúa con la API de OpenAI para generar los datos.
-**zod**: Una biblioteca para validación de esquemas y tipos de datos.
+```typescript
+fakerAI.setIsZodScheme(true); // Activar validación con Zod
+```
 
-### Contribuciones
+- **setIsJSONScheme:** Habilita o deshabilita la generación de datos en formato JSON.
 
-Si deseas contribuir a este proyecto, por favor abre un "pull request" con tus mejoras o correcciones.
+```typescript
+fakerAI.setIsJSONScheme(true); // Activar formato JSON
+```
 
-### Licencia
+## Formato de Respuesta
 
-Este proyecto está bajo la Licencia MIT - consulta el archivo LICENSE para más detalles.
+Los datos generados pueden ser obtenidos a través del método **getAll():**
+
+```typescript
+const data = fakerAI.getAll();
+```
+
+## Contribuciones
+
+Las contribuciones son bienvenidas. Si tienes una mejora o corrección, por favor abre un pull request.
+
+## Licencia
+
+Este proyecto está bajo la Licencia MIT. Consulta el archivo LICENSE para más detalles.
+
+---
+
+¡Gracias por usar **FakerAI**! Esperamos que esta herramienta sea útil para tus proyectos de desarrollo y pruebas de software.
